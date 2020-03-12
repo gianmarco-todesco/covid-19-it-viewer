@@ -23,17 +23,26 @@
     </head>
     <body>
         <h1>Spread of covid-19 in Italy</h1>
-        <p>The italian "Protezione civile" provides data 
-            about the spread of COVID-19 : 
+        <p>The Italian "Protezione civile" is in charge of offical daily 
+            bulletin on COVID-19. The whole dataset has been made available
+            in  
             <a href="https://github.com/pcm-dpc/COVID-19">https://github.com/pcm-dpc/COVID-19</a>
         </p>
         <p>
-            The following animation shows the progress of the epidemy
-            through the Italian "province". The code of the animation
+            I built a simple animation to visualize the spreading of the virus
+            across Italian provinces.
+
+            
+            The animation below shows the epidemy spreading across the Italian 
+            provinces. The code of the animation
             is available at 
             <a href="https://github.com/gianmarco-todesco/covid-19-it-viewer">https://github.com/gianmarco-todesco/covid-19-it-viewer</a>
         </p>
-        <p>Move the slider to browse across the weeks</p>
+        <p>
+            Circles are centered on the provinces maintowns. Their radius is proportional to the log of the total number of
+            recorded cases (active and closes). 
+        </p>
+        <p>Move the slider to browse across time</p>
         <div>
             <input 
                 type="range" 

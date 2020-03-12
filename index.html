@@ -8,11 +8,14 @@
         <meta name="author" content="SitePoint">
 
         <style>
+            body {
+                padding:30px;
+            }
             canvas {
                 width:600px;
                 height:600px;
                 border:solid 1px black;
-                box-shadow: 10px 10px 10px gray;
+                box-shadow: 5px 5px 5px gray;
             }
             input, span {
                 display: inline-block;
@@ -24,25 +27,21 @@
     <body>
         <h1>Spread of covid-19 in Italy</h1>
         <p>The Italian "Protezione civile" is in charge of offical daily 
-            bulletin on COVID-19. The whole dataset has been made available
+            bulletins on COVID-19. The whole dataset has been made available
             in  
             <a href="https://github.com/pcm-dpc/COVID-19">https://github.com/pcm-dpc/COVID-19</a>
         </p>
         <p>
             I built a simple animation to visualize the spreading of the virus
-            across Italian provinces.
-
-            
-            The animation below shows the epidemy spreading across the Italian 
-            provinces. The code of the animation
+            across Italian provinces. The code of the animation
             is available at 
-            <a href="https://github.com/gianmarco-todesco/covid-19-it-viewer">https://github.com/gianmarco-todesco/covid-19-it-viewer</a>
+            <a href="https://github.com/gianmarco-todesco/covid-19-it-viewer">https://github.com/gianmarco-todesco/covid-19-it-viewer</a>.
         </p>
         <p>
-            Circles are centered on the provinces maintowns. Their radius is proportional to the log of the total number of
-            recorded cases (active and closes). 
+            Circles are centered on the provinces main towns. Their radius is proportional to the log of the total number of
+            recorded cases (active and closed). 
         </p>
-        <p>Move the slider to browse across time</p>
+        <p>Move the slider to browse across time.</p>
         <div>
             <input 
                 type="range" 

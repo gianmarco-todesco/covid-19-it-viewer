@@ -1,30 +1,40 @@
+"use strict";
+
 let canvas,ctx
+const dataUrl = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-province.json"
+// const dataUrl = "../dpc-covid19-ita-province.json"
+let data
+let rawdata
+let tdata = {}
+let ts = []
+let lat0, lat1, lon0, lon1
+let label
+let slider
+let dateFormatter = new Intl.DateTimeFormat('en', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: '2-digit' 
+}) 
+
 
 function init()
 {
     canvas = document.getElementById('c')
     ctx = canvas.getContext('2d')
-    animate()
-    
+    label = document.getElementById('t')
+    slider = document.getElementById('slider')
+    slider.oninput = onSliderChanged
+
+    label.innerHTML = "Loading data ..."
+    fetch(dataUrl).then(resp=>resp.json()).then(processData)
 }
 
 window.onload = init
 
-let data
-// fetch('https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-province.json')
-fetch('dpc-covid19-ita-province.json')
-    .then(resp => resp.json())
-    .then(process);
-
-let rawdata
-let tdata = {}
-let ts = []
-let lat0, lat1, lon0, lon1
-
-function process(data) {
+function processData(data) {
     rawdata = data
     data.forEach(item => {
-        m = item.totale_casi
+        const m = item.totale_casi
         if(m>0) {
             const t = new Date(item.data).getTime()
             let rec = tdata[t]
@@ -50,10 +60,17 @@ function process(data) {
         }
     });
     ts = ts.sort()
+    slider.min = 0
+    slider.max = ts.length-1
+    slider.value = 0
+    showDate(ts[0])
 }
 
 
-function paint(t) {
+function showDate(t) {
+    
+    label.innerHTML = dateFormatter.format(new Date(t))
+
     const w = canvas.width = canvas.clientWidth
     const h = canvas.height = canvas.clientHeight
     tdata[t].lst.forEach(item => {
@@ -96,3 +113,8 @@ function foo(v)
 }
 
 
+function onSliderChanged() {
+    let i = Math.floor(this.value)
+    if(0<=i && i<ts.length)
+        showDate(ts[i])
+}

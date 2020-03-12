@@ -14,19 +14,35 @@
                 border:solid 1px black;
                 box-shadow: 10px 10px 10px gray;
             }
+            input, span {
+                display: inline-block;
+                vertical-align: middle;
+            }
         </style>
         <script src="main.js"></script>
     </head>
     <body>
-        <div class="slidecontainer">
+        <h1>Spread of covid-19 in Italy</h1>
+        <p>The italian "Protezione civile" provides data 
+            about the spread of COVID-19 : 
+            <a href="https://github.com/pcm-dpc/COVID-19">https://github.com/pcm-dpc/COVID-19</a>
+        </p>
+        <p>
+            The following animation shows the progress of the epidemy
+            through the Italian "province". The code of the animation
+            is available at 
+            <a href="https://github.com/gianmarco-todesco/covid-19-it-viewer">https://github.com/gianmarco-todesco/covid-19-it-viewer</a>
+        </p>
+        <p>Move the slider to browse across the weeks</p>
+        <div>
             <input 
                 type="range" 
-                min="1" max="100" value="50" 
-                class="slider" 
-                id="myRange"
-                oninput="foo(this.value)">
-            <span id="t"></span>
+                id="slider"
+                >
+            <span id="t">   
+            </span>
         </div>
+        
         <canvas id="c"></canvas>
         
     </body>    

@@ -1,0 +1,33 @@
+
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>covid-19 spread in Italy</title>
+        <meta name="description" content="The HTML5 Herald">
+        <meta name="author" content="SitePoint">
+
+        <style>
+            canvas {
+                width:600px;
+                height:600px;
+                border:solid 1px black;
+                box-shadow: 10px 10px 10px gray;
+            }
+        </style>
+        <script src="main.js"></script>
+    </head>
+    <body>
+        <div class="slidecontainer">
+            <input 
+                type="range" 
+                min="1" max="100" value="50" 
+                class="slider" 
+                id="myRange"
+                oninput="foo(this.value)">
+            <span id="t"></span>
+        </div>
+        <canvas id="c"></canvas>
+        
+    </body>    
+</html>

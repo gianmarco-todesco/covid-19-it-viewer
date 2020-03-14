@@ -1,8 +1,8 @@
 "use strict";
 
 // data source URL
-// const dataUrl = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-province.json"
-const dataUrl = "../dpc-covid19-ita-province.json"
+const dataUrl = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-province.json"
+// const dataUrl = "../dpc-covid19-ita-province.json"
 
 let rawdata // just for debugging
 

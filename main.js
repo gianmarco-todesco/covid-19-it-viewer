@@ -1,8 +1,8 @@
 "use strict";
 
 let canvas,ctx
-const dataUrl = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-province.json"
-// const dataUrl = "../dpc-covid19-ita-province.json"
+// const dataUrl = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-province.json"
+const dataUrl = "../dpc-covid19-ita-province.json"
 let data
 let rawdata
 let tdata = {}
@@ -68,8 +68,8 @@ function processData(data) {
                 lat: item.lat,
                 lon: item.long,
                 m:m,
-                prov:item.codice_provincia
-                
+                prov:item.codice_provincia,
+                name:item.denominazione_provincia
             })
             const lat = item.lat, lon = item.long
             if(lat>0 && lon>0) {
@@ -119,20 +119,21 @@ function showDate(t) {
         const m = item.m
         const radius = 5000*Math.log(m)
         const prov = item.prov
+        let circle
         if(circles[prov] === undefined) {
-            let circle = L.circle([lat, lon], {
+            circle = L.circle([lat, lon], {
                 color: 'none',
                 fillColor: '#f21',
                 fillOpacity: 0.5,
                 radius: radius
             }).addTo(theMap);
-            circle.used = true
             circles[prov] = circle
         } else {
-            let circle = circles[prov]
-            circle.setRadius(radius)
-            circle.used = true
-        }        
+            circle = circles[prov]
+            circle.setRadius(radius)            
+        }   
+        circle.used = true
+        circle.bindTooltip(item.name + "<br>" + item.m + " total cases")     
     })
     let tokill = []
     for(let p in circles) { 

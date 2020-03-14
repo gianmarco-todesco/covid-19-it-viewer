@@ -1,40 +1,44 @@
 "use strict";
 
-let canvas,ctx
-const dataUrl = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-province.json"
-// const dataUrl = "../dpc-covid19-ita-province.json"
-let data
-let rawdata
+// data source URL
+// const dataUrl = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-province.json"
+const dataUrl = "../dpc-covid19-ita-province.json"
+
+let rawdata // just for debugging
+
+// tdata contains the processed data: time => record; record contains a list of values for each province
 let tdata = {}
+
+// available times
 let ts = []
-let lat0, lat1, lon0, lon1
+
+// HTML span element that visualizes the date
 let label
+
+// Slider to change the current date
 let slider
+
+// leafjs map
 let theMap
+
+// the formatter used to visualize the current date
 let dateFormatter = new Intl.DateTimeFormat('en', { 
     year: 'numeric', 
     month: 'short', 
     day: '2-digit' 
 }) 
 
+// the disks representing the infections
+let circles = {}
 
-function init2()
-{
-    canvas = document.getElementById('c')
-    ctx = canvas.getContext('2d')
-    label = document.getElementById('t')
-    slider = document.getElementById('slider')
-    slider.oninput = onSliderChanged
-
-    label.innerHTML = "Loading data ..."
-    fetch(dataUrl).then(resp=>resp.json()).then(processData)
-}
-
+// intitialize the app
 function init()
 {
-
+    // create the map (see https://leafletjs.com/)
     theMap = L.map('mapid').setView([42.01665183556825, 12.436523437500002], 6);
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+
+    const mapSource = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw'
+    L.tileLayer(mapSource, {
 		maxZoom: 18,
 		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
 			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -42,28 +46,40 @@ function init()
 		id: 'mapbox.streets'
 	}).addTo(theMap);
 
-   label = document.getElementById('t')
-   slider = document.getElementById('slider')
-   slider.oninput = onSliderChanged
+    // get HTML elements (label and slider)
+    label = document.getElementById('t')
+    slider = document.getElementById('slider')
+    slider.oninput = onSliderChanged
 
-   label.innerHTML = "Loading data ..."
-   fetch(dataUrl).then(resp=>resp.json()).then(processData)
+    label.innerHTML = "Loading data ..."
+
+    // fetch the data (note: I really should check for errors..)
+    fetch(dataUrl).then(resp=>resp.json()).then(processData)
 }
-
 window.onload = init
 
+// process the data. It is a json containing a list of records
 function processData(data) {
-    rawdata = data
+    rawdata = data // for debugging
+
     data.forEach(item => {
+
+        // total number of cases
         const m = item.totale_casi
         if(m>0) {
+
+            // timestamp
             const t = new Date(item.data).getTime()
+
+            // add a new entry for the given timestamp (or update the old one)
             let rec = tdata[t]
             if(!rec) { 
                 rec = {lst:[], t:t} 
                 tdata[t] = rec 
                 ts.push(t)
             }
+
+            // add the new point
             rec.lst.push({
                 lat: item.lat,
                 lon: item.long,
@@ -71,56 +87,43 @@ function processData(data) {
                 prov:item.codice_provincia,
                 name:item.denominazione_provincia
             })
-            const lat = item.lat, lon = item.long
-            if(lat>0 && lon>0) {
-                if(lat0 === undefined) { lat0=lat1=lat; lon0=lon1=lon }
-                else {
-                    if(lat<lat0)lat0=lat; else if(lat>lat1)lat1=lat
-                    if(lon<lon0)lon0=lon; else if(lon>lon1)lon1=lon
-                }
-    
-            }
         }
     });
+
+    // sort data (this should not be necessary, but just in case ...)
     ts = ts.sort()
+
+    // update parameters of the slider
     slider.min = 0
     slider.max = ts.length-1
     slider.value = 0
+
+    // visualize the first day
     showDate(ts[0])
 }
 
-let circles = {}
 
+// visualize the data for a given time
 function showDate(t) {
-    
+    // put the date in the label HTML span
     label.innerHTML = dateFormatter.format(new Date(t))
 
-    /*
-    const w = canvas.width = canvas.clientWidth
-    const h = canvas.height = canvas.clientHeight
-    tdata[t].lst.forEach(item => {
-        const lat = item.lat
-        const lon = item.lon
-        const m = item.m
-        const x = 100 + (w-200) * (lon-lon0)/(lon1-lon0)
-        const y = 100 + (h-200) * (lat1-lat)/(lat1-lat0)
-        const r = 2*Math.log(m)
-        ctx.fillStyle = "rgb(200,100,100,0.5)"
-        ctx.beginPath()        
-        ctx.moveTo(x+r,y)
-        ctx.arc(x,y,r,0,2*Math.PI)
-        ctx.fill()
-    })
-    */
+    // mark as unsed all the visualized circles
     for(let p in circles) { circles[p].used = false }
+
+    // for each point
     tdata[t].lst.forEach(item => {
+        // get position (lat,lon), province code and number of cases
         const lat = item.lat
         const lon = item.lon
         const m = item.m
-        const radius = 5000*Math.log(m)
         const prov = item.prov
+        // compute the radius
+        const radius = 5000*Math.log(m)
+        // create a new circle or modify an old one (circles are associated with provinces)
         let circle
         if(circles[prov] === undefined) {
+            // create a new circle
             circle = L.circle([lat, lon], {
                 color: 'none',
                 fillColor: '#f21',
@@ -129,12 +132,16 @@ function showDate(t) {
             }).addTo(theMap);
             circles[prov] = circle
         } else {
+            // update the old one
             circle = circles[prov]
             circle.setRadius(radius)            
         }   
+        // mark the circle as used
         circle.used = true
+        // add a tooltip
         circle.bindTooltip(item.name + "<br>" + item.m + " total cases")     
     })
+    // remove unused circles
     let tokill = []
     for(let p in circles) { 
         if(!circles[p].used) { circles[p].remove(); tokill.push(p) }
@@ -142,31 +149,7 @@ function showDate(t) {
     tokill.forEach(p=>delete circles[p])
 }
 
-
-function animate() {
-    if(ts && ts.length>0) {
-        let s = performance.now() * 0.001
-        s = (s - Math.floor(s)) * 2
-        let i = Math.floor(ts.length * s)
-        if(i>=ts.length) i = ts.length-1
-        
-        paint(ts[i])
-    }
-
-    // requestAnimationFrame(animate)
-}
-
-function foo(v)
-{
-    v = Math.floor(v)
-    console.log(v)
-    if(0<=v && v<ts.length) {
-        paint(ts[v])
-        document.getElementById('t').innerHTML = new Date(ts[v])
-    }
-}
-
-
+// user's just moved the slider: update the page
 function onSliderChanged() {
     let i = Math.floor(this.value)
     if(0<=i && i<ts.length)

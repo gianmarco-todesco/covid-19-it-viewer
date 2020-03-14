@@ -1,5 +1,6 @@
 .slider-container {
-    margin:2em 40px 2em 40px;
+    margin:4em 40px 4em 40px;
+    touch-action: none;
 }
 .slider {
     -webkit-appearance: none;

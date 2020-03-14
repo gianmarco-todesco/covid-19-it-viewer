@@ -7,22 +7,8 @@
         <meta name="description" content="A animation that visualizes the spread of the Covid-19 across the Italian provinces">
         <meta name="author" content="Gian Marco Todesco">
 
-        <style>
-            body {
-                padding:30px;
-            }
-            #mapid {
-                width:600px;
-                height:600px;
-                border:solid 1px black;
-                box-shadow: 5px 5px 5px gray;
-            }
-            input, span {
-                display: inline-block;
-                vertical-align: middle;
-            }
-        </style>
-         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        <link rel="stylesheet" href="style.css"/>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
          integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
          crossorigin=""/>
          <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
@@ -53,12 +39,11 @@
         </p>
         <p>Move the slider to browse across time.</p>
         <div>
-            <input 
-                type="range" 
-                id="slider"
-                >
-            <span id="t">   
-            </span>
+            <div class="slider-container">
+                <input type="range" id="slider" class="slider">
+                <span id="t">   </span>
+
+            </div>
         </div>
         
         <div id="mapid"></div>
